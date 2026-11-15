@@ -40,6 +40,12 @@ jobs:
           APP="$(find build/ios -name shumaguanjia.app -type d | head -n 1)"
           echo "APP=$APP"
           test -n "$APP"
+          # 兜底：确保启动图已编译进 App（iOS 12/13 必需）
+          if [ ! -d "$APP/LaunchScreen.storyboardc" ]; then
+            echo "编译启动图 LaunchScreen.storyboard"
+            xcrun ibtool --compile "$APP/LaunchScreen.storyboardc" ios/LaunchScreen.storyboard
+          fi
+          ls "$APP"
           mkdir -p dist/Payload
           cp -R "$APP" dist/Payload/
           cd dist

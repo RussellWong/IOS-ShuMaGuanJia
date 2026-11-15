@@ -97,6 +97,10 @@ elseif(IOS)
             IMGUI_IMPL_OPENGL_ES2=1
             GLES_SILENCE_DEPRECATION=1)
     set_source_files_properties(src/ios/main_ios.mm PROPERTIES COMPILE_OPTIONS "-fobjc-arc")
+    # 启动图：iOS 12 / 13 必须有 launch storyboard，否则窗口会被缩放成 320x480
+    target_sources(shumaguanjia PRIVATE ios/LaunchScreen.storyboard)
+    set_source_files_properties(ios/LaunchScreen.storyboard PROPERTIES
+            MACOSX_PACKAGE_LOCATION "Resources")
     target_link_libraries(shumaguanjia PRIVATE dm_core
             "-framework UIKit"
             "-framework QuartzCore"

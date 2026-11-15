@@ -67,6 +67,10 @@ ImVec2 V(float x, float y) { return ImVec2(x * g_scale, y * g_scale); }
 float Scale() { return g_scale; }
 float CanvasW() { return g_cw; }
 float CanvasH() { return g_ch; }
+void SetCanvas(float w, float h) {
+    if (w > 0.0f) g_cw = w;
+    if (h > 0.0f) g_ch = h;
+}
 
 // ===========================================================================
 // 初始化

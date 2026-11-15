@@ -367,11 +367,15 @@ static void initFonts(float scale) {
     CGRect px = [self contentRectPixels];
     if (px.size.width < 1.0f || px.size.height < 1.0f) return NO;
 
+    // 以屏宽为基准缩放，画布高度按屏幕实际比例延展：
+    // 全面屏（19.5:9）、16:9（SE / 8 Plus）、动态岛机型都能铺满且不留黑边。
     float scale = (float)px.size.width / 390.0f;
-    float sh = (float)px.size.height / 844.0f;
-    if (sh < scale) scale = sh;
     if (scale < 1.0f) scale = 1.0f;
     g_scale = scale;
+
+    float canvasH = (float)px.size.height / scale;
+    if (canvasH < 600.0f) canvasH = 600.0f;
+    if (canvasH > 1200.0f) canvasH = 1200.0f;
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -380,7 +384,8 @@ static void initFonts(float scale) {
     io.LogFilename = nullptr;
     io.DisplaySize = ImVec2((float)px.size.width, (float)px.size.height);
 
-    initFonts(scale);
+    initFonts(scale);                    // Init 内部会把画布重置为 390x844
+    ui::SetCanvas(390.0f, canvasH);      // 必须在其后设置实际画布高度
     ImGui_ImplOpenGL3_Init("#version 100");
 
     g_app.fontPath = g_fontPath;

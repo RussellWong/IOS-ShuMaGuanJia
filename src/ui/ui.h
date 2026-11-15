@@ -45,6 +45,9 @@ ImVec2 V(float x, float y);
 float Scale();
 float CanvasW();
 float CanvasH();
+// 设置逻辑画布尺寸（默认 390x844）。移动端按屏宽等比缩放后，
+// 可用它把画布高度延展到屏幕实际比例，避免 16:9 机型出现左右留白。
+void SetCanvas(float w, float h);
 
 // 每帧开始（处理输入法回调、提示消失等）
 void Tick(float dt);

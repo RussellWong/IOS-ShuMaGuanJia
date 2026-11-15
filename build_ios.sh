@@ -70,6 +70,12 @@ APP_PATH="$(find "$BUILD" -name "$EXEC_NAME.app" -type d | head -n 1)"
 [ -n "$APP_PATH" ] || { echo "错误：未找到 $EXEC_NAME.app"; exit 1; }
 echo "App: $APP_PATH"
 
+# 兜底：确保启动图已编译进 App（iOS 12/13 必需，否则窗口会被缩放）
+if [ ! -d "$APP_PATH/LaunchScreen.storyboardc" ]; then
+  echo "编译启动图 LaunchScreen.storyboard"
+  xcrun ibtool --compile "$APP_PATH/LaunchScreen.storyboardc" "$ROOT/ios/LaunchScreen.storyboard"
+fi
+
 # ---------------- 3. 可选：手动签名 ----------------
 if [ -n "$SIGN_IDENTITY" ] && [ -n "$PROFILE" ]; then
   say "3/4 使用证书手动签名"
