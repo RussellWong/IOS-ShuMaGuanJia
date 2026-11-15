@@ -1,0 +1,50 @@
+# 在 GitHub 的 macOS 机器上编译 iOS 版，产出未签名 IPA（越狱机可直接安装）
+# 用法：把整个工程推到 GitHub → Actions → “构建 iOS 安装包” → Run workflow
+name: 构建 iOS 安装包
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-ipa:
+    runs-on: macos-15
+    steps:
+      - name: 拉取源码
+        uses: actions/checkout@v4
+
+      - name: 环境信息
+        run: |
+          xcodebuild -version
+          cmake --version
+
+      - name: 生成 Xcode 工程
+        run: |
+          cmake -S . -B build/ios -G Xcode \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0
+
+      - name: 编译（不签名）
+        run: |
+          xcodebuild -project build/ios/shumaguanjia.xcodeproj \
+            -target shumaguanjia -configuration Release -sdk iphoneos \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+
+      - name: 打包 IPA
+        run: |
+          APP="$(find build/ios -name shumaguanjia.app -type d | head -n 1)"
+          echo "APP=$APP"
+          test -n "$APP"
+          mkdir -p dist/Payload
+          cp -R "$APP" dist/Payload/
+          cd dist
+          zip -qry 数码管家.ipa Payload
+          ls -lh 数码管家.ipa
+
+      - name: 上传安装包
+        uses: actions/upload-artifact@v4
+        with:
+          name: shumaguanjia-ipa
+          path: dist/数码管家.ipa

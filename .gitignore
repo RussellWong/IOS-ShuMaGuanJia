@@ -1,0 +1,11 @@
+# 构建产物
+build/
+dist/
+out/
+.vs/
+
+# 安装包与签名文件（证书私钥不要上传到仓库）
+*.apk
+*.idsig
+*.ipa
+*.keystore
