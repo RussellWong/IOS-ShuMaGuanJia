@@ -52,7 +52,9 @@ cmake "${CMAKE_ARGS[@]}"
 
 # ---------------- 2. 编译 ----------------
 say "2/4 编译 Release 版本"
-PROJ="$BUILD/shumaguanjia.xcodeproj"
+PROJ="$(find "$BUILD" -maxdepth 1 -name '*.xcodeproj' | head -n 1)"
+[ -n "$PROJ" ] || { echo "错误：未生成 Xcode 工程"; exit 1; }
+echo "工程: $PROJ"
 if [ -n "$TEAM_ID" ]; then
   # 使用你的开发者账号自动签名（首次会自动注册 App ID 并生成描述文件）
   xcodebuild -project "$PROJ" -target "$APP_NAME" -configuration Release \

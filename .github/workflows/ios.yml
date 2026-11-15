@@ -28,7 +28,10 @@ jobs:
 
       - name: 编译（不签名）
         run: |
-          xcodebuild -project build/ios/shumaguanjia.xcodeproj \
+          PROJ="$(find build/ios -maxdepth 1 -name '*.xcodeproj' | head -n 1)"
+          echo "PROJ=$PROJ"
+          test -n "$PROJ"
+          xcodebuild -project "$PROJ" \
             -target shumaguanjia -configuration Release -sdk iphoneos \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
 
